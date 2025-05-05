@@ -1,0 +1,136 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+/* 格子基础样式 */
+.cell {
+    width: 80px;
+    height: 80px;
+    background-color: white;
+    border: 1px solid #999;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+/* 填充状态（深灰色） */
+.cell.true {
+    background-color: #4f4f4f;
+}
+
+/* 标记状态（X图标） */
+.cell.false {
+    background-image: url('../img/x-mark.png');
+    background-size: cover;
+    background-position: center;
+}
+
+/* 提示区域 */
+.nonogram-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    width: fit-content;
+    margin: 0 auto;
+}
+
+/* 主网格 */
+.grid {
+    display: grid;
+    gap: 2px;
+    padding: 2px;
+}
+
+/* 行提示 + 主网格容器 */
+.row-hints-and-grid {
+    display: flex;
+    gap: 8px;
+}
+
+/* 行提示区域 */
+.row-hints {
+    width: 120px;
+    display: grid;
+    grid-template-rows: repeat(var(--rows), 80px);
+    gap: 2px;
+    margin-right: 8px;
+    /* background-color: #ccc; */
+}
+
+/* 行提示数字 */
+.row-hint {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: center;
+    padding-right: 5px;
+    font-size: 20px;
+    word-spacing: 20px;
+}
+
+/* 列提示区域 */
+.col-hints {
+    display: grid;
+    grid-template-columns: repeat(var(--cols), 80px);
+    height: auto;
+    gap: 2px;
+    margin-left: 130px;
+    margin-bottom: 8px;
+    /* background-color: #ccc; */
+}
+
+/* 列提示数字 */
+.col-hint {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    height: 80px;
+    white-space: pre;
+    font-size: 20px;
+    line-height: 2;
+}
+
+.win-dialog {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px 40px; /* 上下30px，左右50px */
+    background-color: white;
+    border: 2px solid #4f4f4f;
+    border-radius: 16px;
+    z-index: 1000;
+    text-align: center;
+    min-width: 300px; /* 设置最小宽度 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* 阴影效果 */
+}
+
+.win-dialog h2 {
+    font-size: 28px; /* 标题字号 */
+    margin-bottom: 15px; /* 标题与正文间距 */
+    color: #333; /* 深灰色文字 */
+}
+
+.win-dialog p {
+    font-size: 22px; /* 正文字号 */
+    margin-bottom: 25px; /* 正文与按钮间距 */
+    color: #555; /* 稍浅的灰色 */
+}
+
+#restart-button {
+    padding: 8px 16px; /* 按钮内边距加大 */
+    background-color: #4f4f4f;
+    color: white;
+    border: none;
+    border-radius: 8px; /* 按钮圆角加大 */
+    cursor: pointer;
+    font-size: 18px; /* 按钮文字大小 */
+    transition: background-color 0.3s; /* 悬停动画 */
+    margin-bottom: 15px;
+}
+
+#restart-button:hover {
+    background-color: #3a3a3a; /* 鼠标悬停颜色变深 */
+}
