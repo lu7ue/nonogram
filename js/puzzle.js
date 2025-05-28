@@ -1,7 +1,10 @@
+import { checkWin } from './check.js';
+
 // 获取HTML中id为"app"的元素作为游戏容器
 const app = document.getElementById('app');
 
 let puzzles = [];
+let state = [];
 
 async function loadPuzzles() {
     try {
@@ -69,17 +72,7 @@ function createGrid() {
         grid.style.gridTemplateColumns = `repeat(${cols}, 80px)`;
 
         // 创建二维数组 跟踪每个格子的状态 --- null(初始)、true(填充)、false(标记X)
-        const state = Array(rows).fill().map(() => Array(cols).fill(null));
-
-        // 二维数组的创建过程详解 --- 假设这里的 rows=3, cols=3
-        // Array(3) → 创建长度为3的空数组：[空, 空, 空] （注意：这些“空”是未初始化的值，不能直接操作）
-        // .fill() → 填充为 undefined：[undefined, undefined, undefined]（因为 map 会跳过未初始化的项）
-        // .map(() => Array(3).fill(null)) → 对每一项执行箭头函数：每次调用 Array(3).fill(null) 生成 [null, null, null]，最终得到：
-        // [
-        //     [null, null, null],
-        //     [null, null, null],
-        //     [null, null, null]
-        //   ]
+        state = Array(rows).fill().map(() => Array(cols).fill(null));
 
         // Create grid cells
         for (let i = 0; i < rows; i++) {
@@ -91,58 +84,39 @@ function createGrid() {
                 cell.dataset.col = j; // 等价于在HTML中设置 data-col="${j}"
 
                 // 左键点击 设置为 true --- 如果当前状态是 true，则切换为 null。否则无论是 null 或 false，都切换为 true。
-                cell.addEventListener('click', () => {
+                cell.addEventListener('click', async () => {
                     state[i][j] = state[i][j] === true ? null : true; // state[0][0] 表示第1行第1列的格子；state[i][j] 表示第 i+1 行 第 j+1 列的格子
                     updateCellDisplay(cell, state[i][j]); // 每次点击后立即调用 updateCellDisplay 确保界面同步更新
-                    if (checkWin(puzzle, state)) showWinDialog(); // 检查胜利
+                    if (await checkWin(puzzle, state)) showWinDialog(); // 检查胜利，注意这里变成了异步调用
                 });
+
                 // 右键点击（阻止默认菜单） 设置为 false --- 如果当前状态是 false，切换为 null。否则无论是 null 或 true，都切换为 false。
-                cell.addEventListener('contextmenu', (e) => {
+                cell.addEventListener('contextmenu', async (e) => {
                     e.preventDefault();
                     state[i][j] = state[i][j] === false ? null : false;
                     updateCellDisplay(cell, state[i][j]);
-                    if (checkWin(puzzle, state)) showWinDialog();
+                    if (await checkWin(puzzle, state)) showWinDialog();
                 });
 
                 grid.appendChild(cell);
-                
-                // 添加过程模拟：
-                // <div class="grid">
-                //     <div class="cell" data-row="0" data-col="0"></div>
-                //     <div class="cell" data-row="0" data-col="1"></div>
-                //     <div class="cell" data-row="1" data-col="0"></div>
-                //     <div class="cell" data-row="1" data-col="1"></div>
-                // </div>
             }
         }
 
         // 渲染列提示
-        colHints.forEach((hints, colIndex) => {
+        colHints.forEach((hints) => {
             const hintElement = document.createElement('div');
             hintElement.className = 'col-hint';
             hintElement.textContent = hints.join('\n'); // 竖排显示数字
             colHintsContainer.appendChild(hintElement);
         });
 
-        // 假设列提示为[[1],[2,1],[3]] --- 第二列 hints=[2,1]。按照步骤，先创建div，然后设置内容为"2\n1"，最后添加到容器。
-        // 生成结构如下：
-        //    <div class="col-hints">
-        //         <div class="col-hint">1</div>
-        //         <div class="col-hint">2\n1</div>
-        //         <div class="col-hint">3</div>
-        //     </div>
-
         // 渲染行提示
-        rowHints.forEach((hints, rowIndex) => {
+        rowHints.forEach((hints) => {
             const hintElement = document.createElement('div');
             hintElement.className = 'row-hint';
             hintElement.textContent = hints.join(' '); // 横排显示数字
             rowHintsContainer.appendChild(hintElement);
         });
-
-        // 清空并添加网格
-        app.innerHTML = '';
-        app.appendChild(gridContainer);
 
     } catch (error) {
         console.error('Error creating grid:', error);
@@ -201,34 +175,11 @@ function calculateColHints(puzzle) {
     return colHints;
 }
 
-// 计算行/列提示：1.遍历每一行；2.遇到true时计数增加；3.遇到false且计数>0时，保存计数并清零；4.最后处理可能未保存的计数
-// 行/列提示计算函数不同点：列提示计算需要先遍历列，再遍历行，因为JavaScript数组优先存储行
-// 假设某行数据为[true,true,false,true]，函数运行过程如下：
-// 遇到第一个true，count=1；遇到第二个true → count=2；遇到false → 将2保存到hints，然后清零count；再次遇到true → count=1；这一行的循环结束了，再把1保存到hints；返回hints结果[2,1]
-
-// 胜利检测函数：双重遍历每个格子
-function checkWin(puzzle, state) {
-    for (let i = 0; i < puzzle.length; i++) {
-        for (let j = 0; j < puzzle[0].length; j++) {
-            // 当 puzzle[i][j] 为 true 时，state[i][j] 必须为 true
-            if (puzzle[i][j] && state[i][j] !== true) {
-                return false;
-            }
-            // 当 puzzle[i][j] 为 false 时，state[i][j] 不能为 true（应该为false）
-            if (!puzzle[i][j] && state[i][j] === true) {
-                return false;
-            }
-        }
-    }
-    // 全部检查通过才返回true 否则返回false
-    return true;
-}
-
 // 显示胜利弹窗
 function showWinDialog() {
     const dialog = document.createElement('div');
     dialog.className = 'win-dialog';
-    
+
     dialog.innerHTML = `
         <h2>游戏结束</h2>
         <p>恭喜你，拼图已完成！</p>
