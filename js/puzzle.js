@@ -1,7 +1,18 @@
-import puzzles from '../puzzles/5x5.js';
-
 // 获取HTML中id为"app"的元素作为游戏容器
 const app = document.getElementById('app');
+
+let puzzles = [];
+
+async function loadPuzzles() {
+    try {
+        const response = await fetch('../puzzles/puzzles.json');
+        puzzles = await response.json();
+        createGrid();
+    } catch (error) {
+        console.error('Failed to load puzzles:', error);
+        app.innerHTML = '<p>无法加载拼图数据。</p>';
+    }
+}
 
 // 创建及显示拼图
 function createGrid() {
@@ -235,5 +246,5 @@ function showWinDialog() {
 // 在页面完全加载后初始化游戏
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, initializing grid...');
-    createGrid();
+    loadPuzzles();
 });
