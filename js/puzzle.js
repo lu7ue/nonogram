@@ -10,7 +10,11 @@ async function loadPuzzles() {
     try {
         const response = await fetch('../puzzles/puzzles.json');
         puzzles = await response.json();
-        createGrid();
+
+        // 每次加载随机选一个谜题
+        const randomIndex = Math.floor(Math.random() * puzzles.length);
+        const puzzle = puzzles[randomIndex];
+        createGrid(puzzle);
     } catch (error) {
         console.error('Failed to load puzzles:', error);
         app.innerHTML = '<p>无法加载拼图数据。</p>';
@@ -18,10 +22,10 @@ async function loadPuzzles() {
 }
 
 // 创建及显示拼图
-function createGrid() {
+function createGrid(puzzle) {
     try {
         // 选择数组文件中的第一个拼图（暂时）
-        const puzzle = puzzles[0];
+        // const puzzle = puzzles[0];
         // 验证确保：puzzle存在、是数组、且至少有一行数据
         if (!puzzle || !Array.isArray(puzzle) || !puzzle[0]) {
             throw new Error('Invalid puzzle data');
@@ -183,14 +187,18 @@ function showWinDialog() {
     dialog.innerHTML = `
         <h2>游戏结束</h2>
         <p>恭喜你，拼图已完成！</p>
-        <button id="restart-button">再来一次</button>
+        <button id="restart-button">再来一个</button>
     `;
 
     document.body.appendChild(dialog);
 
     document.getElementById('restart-button').addEventListener('click', () => {
         document.body.removeChild(dialog);
-        createGrid();
+
+        // 随机选择一个新谜题
+        const randomIndex = Math.floor(Math.random() * puzzles.length);
+        const puzzle = puzzles[randomIndex];
+        createGrid(puzzle);
     });
 }
 
