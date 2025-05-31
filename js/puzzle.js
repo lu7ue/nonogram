@@ -8,7 +8,7 @@ let state = [];
 
 async function loadPuzzles() {
     try {
-        const response = await fetch('../puzzles/puzzles.json');
+        const response = await fetch('https://nonogramstorage.blob.core.windows.net/puzzles/puzzles.json');
         puzzles = await response.json();
 
         // 每次加载随机选一个谜题
