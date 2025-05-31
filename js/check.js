@@ -1,17 +1,21 @@
-// 胜利检测函数：双重遍历每个格子
 export async function checkWin(puzzle, state) {
-    for (let i = 0; i < puzzle.length; i++) {
-        for (let j = 0; j < puzzle[0].length; j++) {
-            // 当 puzzle[i][j] 为 true 时，state[i][j] 必须为 true
-            if (puzzle[i][j] && state[i][j] !== true) {
-                return false;
-            }
-            // 当 puzzle[i][j] 为 false 时，state[i][j] 不能为 true（应该为false或null）
-            if (!puzzle[i][j] && state[i][j] === true) {
-                return false;
-            }
+    try {
+        const response = await fetch('https://nonogramfunction.azurewebsites.net/api/CheckWin', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ puzzle, state }),
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to check win condition');
         }
+
+        const result = await response.json();
+        return result.isWin;
+    } catch (error) {
+        console.error('Error checking win condition:', error);
+        return false; // 如果调用失败，默认返回 false
     }
-    // 全部检查通过才返回true 否则返回false
-    return true;
 }
