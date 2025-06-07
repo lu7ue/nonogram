@@ -1,0 +1,324 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "sites_nonogramfunction_name": {
+            "defaultValue": "nonogramfunction",
+            "type": "String"
+        },
+        "serverfarms_ASP_Nonogram_9fc9_externalid": {
+            "defaultValue": "/subscriptions/20ca8b3e-bc4f-47ea-89fe-0abc238fff21/resourceGroups/Nonogram/providers/Microsoft.Web/serverfarms/ASP-Nonogram-9fc9",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2024-04-01",
+            "name": "[parameters('sites_nonogramfunction_name')]",
+            "location": "West Europe",
+            "tags": {
+                "hidden-link: /app-insights-resource-id": "/subscriptions/20ca8b3e-bc4f-47ea-89fe-0abc238fff21/resourceGroups/Nonogram/providers/microsoft.insights/components/nonogramfunction",
+                "hidden-link: /app-insights-instrumentation-key": "4389e50c-1863-4cc3-b079-8428d49527f3",
+                "hidden-link: /app-insights-conn-string": "InstrumentationKey=4389e50c-1863-4cc3-b079-8428d49527f3;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=6275d642-429f-420c-afad-69acb0be121f"
+            },
+            "kind": "functionapp,linux",
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_nonogramfunction_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_nonogramfunction_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[parameters('serverfarms_ASP_Nonogram_9fc9_externalid')]",
+                "reserved": true,
+                "isXenon": false,
+                "hyperV": false,
+                "dnsConfiguration": {},
+                "vnetRouteAllEnabled": false,
+                "vnetImagePullEnabled": false,
+                "vnetContentShareEnabled": false,
+                "siteConfig": {
+                    "numberOfWorkers": 1,
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": false,
+                    "http20Enabled": false,
+                    "functionAppScaleLimit": 100,
+                    "minimumElasticInstanceCount": 0
+                },
+                "functionAppConfig": {
+                    "deployment": {
+                        "storage": {
+                            "type": "blobcontainer",
+                            "value": "https://nonogramstorage.blob.core.windows.net/puzzles",
+                            "authentication": {
+                                "type": "storageaccountconnectionstring",
+                                "storageAccountConnectionStringName": "AzureWebJobsStorage"
+                            }
+                        }
+                    },
+                    "runtime": {
+                        "name": "node",
+                        "version": "20"
+                    },
+                    "scaleAndConcurrency": {
+                        "maximumInstanceCount": 100,
+                        "instanceMemoryMB": 2048
+                    }
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "ipMode": "IPv4",
+                "vnetBackupRestoreEnabled": false,
+                "customDomainVerificationId": "BD154A6A48992F77668E69843E19052F2FAF7086720D13DEC708606454C19928",
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": true,
+                "endToEndEncryptionEnabled": false,
+                "redundancyMode": "None",
+                "publicNetworkAccess": "Enabled",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/ftp')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "tags": {
+                "hidden-link: /app-insights-resource-id": "/subscriptions/20ca8b3e-bc4f-47ea-89fe-0abc238fff21/resourceGroups/Nonogram/providers/microsoft.insights/components/nonogramfunction",
+                "hidden-link: /app-insights-instrumentation-key": "4389e50c-1863-4cc3-b079-8428d49527f3",
+                "hidden-link: /app-insights-conn-string": "InstrumentationKey=4389e50c-1863-4cc3-b079-8428d49527f3;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=6275d642-429f-420c-afad-69acb0be121f"
+            },
+            "properties": {
+                "allow": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/scm')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "tags": {
+                "hidden-link: /app-insights-resource-id": "/subscriptions/20ca8b3e-bc4f-47ea-89fe-0abc238fff21/resourceGroups/Nonogram/providers/microsoft.insights/components/nonogramfunction",
+                "hidden-link: /app-insights-instrumentation-key": "4389e50c-1863-4cc3-b079-8428d49527f3",
+                "hidden-link: /app-insights-conn-string": "InstrumentationKey=4389e50c-1863-4cc3-b079-8428d49527f3;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=6275d642-429f-420c-afad-69acb0be121f"
+            },
+            "properties": {
+                "allow": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/config",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/web')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "tags": {
+                "hidden-link: /app-insights-resource-id": "/subscriptions/20ca8b3e-bc4f-47ea-89fe-0abc238fff21/resourceGroups/Nonogram/providers/microsoft.insights/components/nonogramfunction",
+                "hidden-link: /app-insights-instrumentation-key": "4389e50c-1863-4cc3-b079-8428d49527f3",
+                "hidden-link: /app-insights-conn-string": "InstrumentationKey=4389e50c-1863-4cc3-b079-8428d49527f3;IngestionEndpoint=https://westeurope-5.in.applicationinsights.azure.com/;LiveEndpoint=https://westeurope.livediagnostics.monitor.azure.com/;ApplicationId=6275d642-429f-420c-afad-69acb0be121f"
+            },
+            "properties": {
+                "numberOfWorkers": 1,
+                "defaultDocuments": [
+                    "Default.htm",
+                    "Default.html",
+                    "Default.asp",
+                    "index.htm",
+                    "index.html",
+                    "iisstart.htm",
+                    "default.aspx",
+                    "index.php"
+                ],
+                "netFrameworkVersion": "v4.0",
+                "requestTracingEnabled": false,
+                "remoteDebuggingEnabled": false,
+                "remoteDebuggingVersion": "VS2022",
+                "httpLoggingEnabled": false,
+                "acrUseManagedIdentityCreds": false,
+                "logsDirectorySizeLimit": 35,
+                "detailedErrorLoggingEnabled": false,
+                "publishingUsername": "$nonogramfunction",
+                "scmType": "None",
+                "use32BitWorkerProcess": false,
+                "webSocketsEnabled": false,
+                "alwaysOn": false,
+                "managedPipelineMode": "Integrated",
+                "virtualApplications": [
+                    {
+                        "virtualPath": "/",
+                        "physicalPath": "site\\wwwroot",
+                        "preloadEnabled": false
+                    }
+                ],
+                "loadBalancing": "LeastRequests",
+                "experiments": {
+                    "rampUpRules": []
+                },
+                "autoHealEnabled": false,
+                "vnetRouteAllEnabled": false,
+                "vnetPrivatePortsCount": 0,
+                "publicNetworkAccess": "Enabled",
+                "cors": {
+                    "allowedOrigins": [
+                        "https://portal.azure.com",
+                        "http://127.0.0.1:5500",
+                        "http://localhost:5500"
+                    ],
+                    "supportCredentials": false
+                },
+                "localMySqlEnabled": false,
+                "ipSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictions": [
+                    {
+                        "ipAddress": "Any",
+                        "action": "Allow",
+                        "priority": 2147483647,
+                        "name": "Allow all",
+                        "description": "Allow all access"
+                    }
+                ],
+                "scmIpSecurityRestrictionsUseMain": false,
+                "http20Enabled": false,
+                "minTlsVersion": "1.2",
+                "scmMinTlsVersion": "1.2",
+                "ftpsState": "FtpsOnly",
+                "preWarmedInstanceCount": 0,
+                "functionAppScaleLimit": 100,
+                "functionsRuntimeScaleMonitoringEnabled": false,
+                "minimumElasticInstanceCount": 0,
+                "azureStorageAccounts": {}
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/00fe6831-cad0-4db5-8b87-d4ea20f54752')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "deployer": "core_tools",
+                "start_time": "2025-05-31T16:55:33.7136296Z",
+                "end_time": "2025-05-31T16:56:34.0160443Z",
+                "active": true
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/60cadbee-c972-4340-8e1e-f02d11e60f1e')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "deployer": "core_tools",
+                "start_time": "2025-05-31T16:38:11.7030126Z",
+                "end_time": "2025-05-31T16:39:12.0388078Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/deployments",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/630d648f-ff4e-40d2-b6a6-0925e4bf5905')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "properties": {
+                "status": 4,
+                "deployer": "core_tools",
+                "start_time": "2025-05-31T16:49:38.1708583Z",
+                "end_time": "2025-05-31T16:50:38.4898932Z",
+                "active": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/functions",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/CheckWin')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "properties": {
+                "script_href": "https://nonogramfunction.azurewebsites.net/admin/vfs/home/site/wwwroot/checkWin.js",
+                "test_data_href": "https://nonogramfunction.azurewebsites.net/admin/vfs/tmp/FunctionsData/CheckWin.dat",
+                "href": "https://nonogramfunction.azurewebsites.net/admin/functions/CheckWin",
+                "config": {
+                    "name": "CheckWin",
+                    "entryPoint": "",
+                    "scriptFile": "checkWin.js",
+                    "language": "node",
+                    "functionDirectory": "/home/site/wwwroot/src/functions",
+                    "bindings": [
+                        {
+                            "methods": [
+                                "POST"
+                            ],
+                            "authLevel": "anonymous",
+                            "type": "httpTrigger",
+                            "name": "httpTrigger13c23c2cf5",
+                            "direction": "in"
+                        },
+                        {
+                            "type": "http",
+                            "name": "$return",
+                            "direction": "out"
+                        }
+                    ]
+                },
+                "invoke_url_template": "https://nonogramfunction.azurewebsites.net/api/checkwin",
+                "language": "node",
+                "isDisabled": false
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites/hostNameBindings",
+            "apiVersion": "2024-04-01",
+            "name": "[concat(parameters('sites_nonogramfunction_name'), '/', parameters('sites_nonogramfunction_name'), '.azurewebsites.net')]",
+            "location": "West Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('sites_nonogramfunction_name'))]"
+            ],
+            "properties": {
+                "siteName": "nonogramfunction",
+                "hostNameType": "Verified"
+            }
+        }
+    ]
+}
